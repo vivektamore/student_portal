@@ -1,0 +1,549 @@
+// Prisma Schema for College Student Portal (Prisma ORM 7.x)
+// Single source of truth for MySQL database schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+}
+
+enum Role {
+  STUDENT
+  ADMIN
+  FACULTY
+}
+
+enum AccountStatus {
+  ACTIVE
+  SUSPENDED
+  INACTIVE
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+enum SubmissionStatus {
+  PENDING
+  SUBMITTED
+  LATE
+  GRADED
+}
+
+enum ExamType {
+  MID_TERM
+  END_TERM
+  PRACTICAL
+  QUIZ
+}
+
+enum FeeStatus {
+  PENDING
+  PARTIAL
+  PAID
+  OVERDUE
+}
+
+enum PaymentStatus {
+  COMPLETED
+  PENDING
+  FAILED
+}
+
+enum NoticeCategory {
+  GENERAL
+  ACADEMIC
+  EXAM
+  EVENT
+  URGENT
+  HOLIDAY
+}
+
+enum NoticePriority {
+  NORMAL
+  IMPORTANT
+  CRITICAL
+}
+
+enum ContentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// 1. User Account & Authentication
+model User {
+  id           String        @id @default(cuid())
+  email        String        @unique @db.VarChar(191)
+  passwordHash String        @db.VarChar(255)
+  role         Role          @default(STUDENT)
+  status       AccountStatus @default(ACTIVE)
+  lastLoginAt  DateTime?
+  resetToken   String?       @unique @db.VarChar(191)
+  resetExpires DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  student   Student?
+  faculty   Faculty?
+  auditLogs AuditLog[]
+
+  @@index([role, status])
+}
+
+// 2. Department
+model Department {
+  id        String   @id @default(cuid())
+  code      String   @unique @db.VarChar(50)
+  name      String   @db.VarChar(191)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  programs Program[]
+  faculty  Faculty[]
+  subjects Subject[]
+}
+
+// 3. Academic Program
+model Program {
+  id             String   @id @default(cuid())
+  code           String   @unique @db.VarChar(50)
+  name           String   @db.VarChar(191)
+  departmentId   String
+  totalSemesters Int      @default(8)
+  degreeType     String   @default("B.Tech") @db.VarChar(50)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  department       Department       @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  students         Student[]
+  timetableEntries TimetableEntry[]
+
+  @@index([departmentId])
+}
+
+// 4. Student Profile
+model Student {
+  id               String    @id @default(cuid())
+  userId           String    @unique
+  enrollmentNumber String    @unique @db.VarChar(100) // e.g. VU-2022-CSE-0142
+  firstName        String    @db.VarChar(100)
+  lastName         String    @db.VarChar(100)
+  phone            String?   @db.VarChar(20)
+  dateOfBirth      DateTime?
+  address          String?   @db.Text
+  avatarUrl        String?   @db.VarChar(255)
+  departmentId     String
+  programId        String
+  currentSemester  Int       @default(1)
+  academicYear     String    @default("2024-2025") @db.VarChar(50)
+  cgpa             Decimal   @default(0.00) @db.Decimal(4, 2)
+  admissionDate    DateTime  @default(now())
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  user        User                   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  program     Program                @relation(fields: [programId], references: [id], onDelete: Restrict)
+  enrollments SubjectEnrollment[]
+  attendance  AttendanceRecord[]
+  submissions AssignmentSubmission[]
+  results     Result[]
+  feeRecords  FeeRecord[]
+  payments    Payment[]
+  lessonProgress LessonProgress[]
+
+  @@index([departmentId, programId, currentSemester])
+}
+
+// 5. Faculty Member
+model Faculty {
+  id           String   @id @default(cuid())
+  userId       String   @unique
+  employeeId   String   @unique @db.VarChar(100)
+  firstName    String   @db.VarChar(100)
+  lastName     String   @db.VarChar(100)
+  designation  String   @default("Assistant Professor") @db.VarChar(100)
+  departmentId String
+  phone        String?  @db.VarChar(20)
+  officeRoom   String?  @db.VarChar(50)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user               User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  department         Department          @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  facultySubjects    FacultySubject[]
+  attendanceSessions AttendanceSession[]
+  timetableEntries   TimetableEntry[]
+  assignments        Assignment[]
+
+  @@index([departmentId])
+}
+
+// 6. Academic Subject / Course
+model Subject {
+  id           String   @id @default(cuid())
+  code         String   @unique @db.VarChar(50) // e.g. CS-301
+  name         String   @db.VarChar(191) // e.g. Design & Analysis of Algorithms
+  departmentId String
+  credits      Int      @default(3)
+  semester     Int      @default(1)
+  type         String   @default("Core Theory") @db.VarChar(50)
+  description  String?  @db.Text
+  syllabus     String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department         Department          @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  enrollments        SubjectEnrollment[]
+  facultyAssignments FacultySubject[]
+  attendanceSessions AttendanceSession[]
+  timetableEntries   TimetableEntry[]
+  assignments        Assignment[]
+  exams              Exam[]
+  results            Result[]
+  learningModules    LearningModule[]
+
+  @@index([departmentId, semester])
+}
+
+// 7. Student Course Enrollment
+model SubjectEnrollment {
+  id           String   @id @default(cuid())
+  studentId    String
+  subjectId    String
+  academicYear String   @db.VarChar(50) // e.g. 2024-2025
+  semester     Int
+  status       String   @default("ENROLLED") @db.VarChar(50)
+  enrolledAt   DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, subjectId, academicYear, semester])
+  @@index([subjectId])
+}
+
+// 8. Faculty to Subject Mapping
+model FacultySubject {
+  id            String  @id @default(cuid())
+  facultyId     String
+  subjectId     String
+  academicYear  String  @default("2024-2025") @db.VarChar(50)
+  isCoordinator Boolean @default(false)
+
+  faculty Faculty @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+
+  @@unique([facultyId, subjectId, academicYear])
+  @@index([subjectId])
+}
+
+// 9. Timetable Entry
+model TimetableEntry {
+  id           String @id @default(cuid())
+  programId    String
+  semester     Int
+  dayOfWeek    Int // 1 = Monday, 2 = Tuesday, ... 6 = Saturday
+  startTime    String @db.VarChar(20) // e.g. "09:00 AM"
+  endTime      String @db.VarChar(20) // e.g. "10:00 AM"
+  room         String @db.VarChar(50) // e.g. "Hall B-204"
+  subjectId    String
+  facultyId    String
+  academicYear String @default("2024-2025") @db.VarChar(50)
+
+  program Program @relation(fields: [programId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  faculty Faculty @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+
+  @@index([programId, semester, dayOfWeek])
+  @@index([facultyId, dayOfWeek])
+  @@index([room, dayOfWeek])
+}
+
+// 10. Attendance Session
+model AttendanceSession {
+  id          String   @id @default(cuid())
+  subjectId   String
+  facultyId   String
+  sessionDate DateTime @db.Date
+  slotTime    String   @db.VarChar(50)
+  topic       String?  @db.VarChar(255)
+  createdAt   DateTime @default(now())
+
+  subject Subject            @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  faculty Faculty            @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  records AttendanceRecord[]
+
+  @@index([subjectId, sessionDate])
+}
+
+// 11. Attendance Record per Student
+model AttendanceRecord {
+  id        String           @id @default(cuid())
+  sessionId String
+  studentId String
+  status    AttendanceStatus @default(PRESENT)
+  remarks   String?          @db.VarChar(255)
+  createdAt DateTime         @default(now())
+
+  session AttendanceSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  student Student           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, studentId])
+  @@index([studentId, status])
+}
+
+// 12. Assignment
+model Assignment {
+  id          String   @id @default(cuid())
+  subjectId   String
+  facultyId   String
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  dueDate     DateTime
+  maxMarks    Int      @default(100)
+  fileUrl     String?  @db.VarChar(255)
+  isPublished Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subject     Subject                @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  faculty     Faculty                @relation(fields: [facultyId], references: [id], onDelete: Cascade)
+  submissions AssignmentSubmission[]
+
+  @@index([subjectId, dueDate])
+}
+
+// 13. Assignment Submission
+model AssignmentSubmission {
+  id            String           @id @default(cuid())
+  assignmentId  String
+  studentId     String
+  submittedAt   DateTime         @default(now())
+  fileUrl       String?          @db.VarChar(255)
+  comments      String?          @db.Text
+  status        SubmissionStatus @default(SUBMITTED)
+  marksObtained Decimal?         @db.Decimal(5, 2)
+  feedback      String?          @db.Text
+  gradedAt      DateTime?
+
+  assignment Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    Student    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([assignmentId, studentId])
+  @@index([studentId, status])
+}
+
+// 14. Exam
+model Exam {
+  id           String   @id @default(cuid())
+  title        String   @db.VarChar(191) // e.g. "Spring 2025 Mid-Semester Examination"
+  type         ExamType @default(MID_TERM)
+  subjectId    String
+  examDate     DateTime @db.Date
+  startTime    String   @db.VarChar(20) // "10:00 AM"
+  endTime      String   @db.VarChar(20) // "01:00 PM"
+  room         String   @db.VarChar(50) // "Examination Hall 3"
+  maxMarks     Int      @default(100)
+  isPublished  Boolean  @default(false)
+  academicYear String   @default("2024-2025") @db.VarChar(50)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  subject Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  results Result[]
+
+  @@index([subjectId, examDate])
+}
+
+// 15. Examination Result / Grade
+model Result {
+  id            String    @id @default(cuid())
+  studentId     String
+  subjectId     String
+  examId        String
+  internalMarks Decimal   @default(0.00) @db.Decimal(5, 2)
+  examMarks     Decimal   @default(0.00) @db.Decimal(5, 2)
+  totalMarks    Decimal   @default(0.00) @db.Decimal(5, 2)
+  grade         String    @default("F") @db.VarChar(5) // A+, A, B, C, D, F
+  gradePoints   Decimal   @default(0.00) @db.Decimal(4, 2)
+  isPublished   Boolean   @default(false) // Only published marks are visible to students
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  exam    Exam    @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, subjectId, examId])
+  @@index([studentId, isPublished])
+}
+
+// 16. Fee Record (Tuition & Dues)
+model FeeRecord {
+  id           String    @id @default(cuid())
+  studentId    String
+  semester     Int
+  academicYear String    @db.VarChar(50)
+  feeType      String    @default("Semester Tuition & Lab Fee") @db.VarChar(100)
+  totalAmount  Decimal   @db.Decimal(10, 2)
+  paidAmount   Decimal   @default(0.00) @db.Decimal(10, 2)
+  dueAmount    Decimal   @db.Decimal(10, 2)
+  dueDate      DateTime  @db.Date
+  status       FeeStatus @default(PENDING)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  student  Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  payments Payment[]
+
+  @@index([studentId, status])
+}
+
+// 17. Payment Transaction
+model Payment {
+  id             String        @id @default(cuid())
+  feeRecordId    String
+  studentId      String
+  amount         Decimal       @db.Decimal(10, 2)
+  paymentMethod  String        @default("Net Banking") @db.VarChar(50)
+  transactionRef String        @unique @db.VarChar(100)
+  receiptNumber  String        @unique @db.VarChar(100)
+  status         PaymentStatus @default(COMPLETED)
+  paidAt         DateTime      @default(now())
+  notes          String?       @db.Text
+
+  feeRecord FeeRecord @relation(fields: [feeRecordId], references: [id], onDelete: Cascade)
+  student   Student   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, paidAt])
+}
+
+// 18. Notice / Institutional Bulletin
+model Notice {
+  id          String         @id @default(cuid())
+  title       String         @db.VarChar(255)
+  content     String         @db.Text
+  category    NoticeCategory @default(GENERAL)
+  priority    NoticePriority @default(NORMAL)
+  publishedBy String         @default("Dean of Academic Affairs") @db.VarChar(100)
+  isPublished Boolean        @default(true)
+  attachment  String?        @db.VarChar(255)
+  publishedAt DateTime       @default(now())
+  expiresAt   DateTime?
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  audiences NoticeAudience[]
+
+  @@index([isPublished, publishedAt])
+}
+
+// 19. Notice Audience Targeting
+model NoticeAudience {
+  id          String @id @default(cuid())
+  noticeId    String
+  targetType  String @db.VarChar(50) // "ALL", "DEPARTMENT", "PROGRAM", "SEMESTER"
+  targetValue String @default("ALL") @db.VarChar(100)
+
+  notice Notice @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+
+  @@index([noticeId, targetType, targetValue])
+}
+
+// 20. Audit Log for Administrative Actions
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String
+  action     String   @db.VarChar(100) // e.g. "PUBLISH_RESULTS", "UPDATE_FEE", "RECORD_ATTENDANCE"
+  targetType String   @db.VarChar(100) // e.g. "Result", "FeeRecord"
+  targetId   String?  @db.VarChar(100)
+  details    String?  @db.Text
+  ipAddress  String?  @db.VarChar(50)
+  createdAt  DateTime @default(now())
+
+  actor User @relation(fields: [actorId], references: [id], onDelete: Cascade)
+
+  @@index([actorId, action, createdAt])
+}
+
+// 21. Learning Module / Chapter
+model LearningModule {
+  id          String   @id @default(cuid())
+  subjectId   String
+  title       String   @db.VarChar(255)
+  description String?  @db.Text
+  orderIndex  Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  subject Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  lessons VideoLesson[]
+
+  @@index([subjectId, orderIndex])
+}
+
+// 22. Video Lesson / Lecture
+model VideoLesson {
+  id           String        @id @default(cuid())
+  moduleId     String
+  title        String        @db.VarChar(255)
+  description  String?       @db.Text
+  notes        String?       @db.LongText
+  durationSec  Int           @default(0)
+  videoUrl     String        @db.VarChar(500)
+  thumbnailUrl String?       @db.VarChar(500)
+  orderIndex   Int           @default(1)
+  status       ContentStatus @default(PUBLISHED)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  module    LearningModule   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  resources LessonResource[]
+  progress  LessonProgress[]
+
+  @@index([moduleId, orderIndex])
+  @@index([status])
+}
+
+// 23. Lesson Downloadable Resource
+model LessonResource {
+  id        String   @id @default(cuid())
+  lessonId  String
+  title     String   @db.VarChar(255)
+  fileUrl   String   @db.VarChar(500)
+  fileType  String   @default("pdf") @db.VarChar(50)
+  fileSize  String?  @db.VarChar(50)
+  createdAt DateTime @default(now())
+
+  lesson VideoLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@index([lessonId])
+}
+
+// 24. Student Lesson Progress
+model LessonProgress {
+  id             String    @id @default(cuid())
+  studentId      String
+  lessonId       String
+  watchedSeconds Int       @default(0)
+  isCompleted    Boolean   @default(false)
+  lastWatchedAt  DateTime  @default(now())
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  student Student     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  lesson  VideoLesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId])
+  @@index([studentId, isCompleted])
+  @@index([lessonId])
+}
