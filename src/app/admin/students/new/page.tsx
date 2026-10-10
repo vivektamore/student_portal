@@ -44,7 +44,7 @@ export default function NewStudentPage() {
     department: "Computer Science & Engineering",
     program: "B.Tech Computer Science",
     currentSemester: 1,
-    batch: "2024–2028",
+    batch: "2025–2028",
     enrollmentNumber: "",
     institutionalEmail: "",
     guardianName: "",
@@ -59,9 +59,10 @@ export default function NewStudentPage() {
   // Fetch or calculate next roll number from server
   const fetchNextRollNumber = async (dept: string, prog: string) => {
     setIsAutoGenerating(true);
+    const admissionYear = new Date().getFullYear();
     try {
       const res = await fetch(
-        `/api/students/generate-roll?department=${encodeURIComponent(dept)}&program=${encodeURIComponent(prog)}&year=2024`
+        `/api/students/generate-roll?department=${encodeURIComponent(dept)}&program=${encodeURIComponent(prog)}&year=${admissionYear}`
       );
       if (res.ok) {
         const data = await res.json();
@@ -88,7 +89,7 @@ export default function NewStudentPage() {
     }
 
     // Client-side fallback
-    const fallbackRoll = generateRollNumber(dept, prog, 2024, 1);
+    const fallbackRoll = generateRollNumber(dept, prog, admissionYear, 1);
     setFormData((prev) => ({
       ...prev,
       enrollmentNumber: fallbackRoll,
@@ -125,7 +126,7 @@ export default function NewStudentPage() {
     setIsSubmitting(true);
     try {
       await DataService.createStudent({
-        enrollmentNumber: formData.enrollmentNumber || generateRollNumber(formData.department, formData.program, 2024, 1),
+        enrollmentNumber: formData.enrollmentNumber || generateRollNumber(formData.department, formData.program, new Date().getFullYear(), 1),
         firstName: formData.firstName.trim() || "Student",
         lastName: formData.lastName.trim() || "",
         email: formData.institutionalEmail.trim() || `student.${Date.now()}@college.edu`,
@@ -187,7 +188,7 @@ export default function NewStudentPage() {
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-slate-700 text-xs">
           <Shield className="w-4 h-4 text-blue-700" />
-          <span>Audit ID: <strong className="font-semibold text-slate-900">ADM-REG-2024</strong></span>
+          <span>Audit ID: <strong className="font-semibold text-slate-900">ADM-REG-2025</strong></span>
         </div>
       </div>
 
@@ -349,21 +350,24 @@ export default function NewStudentPage() {
                   value={formData.department}
                   onChange={(e) => {
                     const nextDept = e.target.value;
-                    let nextProg = "B.Tech Computer Science";
-                    if (nextDept.includes("Electronics")) nextProg = "B.Tech Electronics & Comm.";
-                    else if (nextDept.includes("Mechanical")) nextProg = "B.Tech Mechanical Engineering";
-                    else if (nextDept.includes("Civil")) nextProg = "B.Tech Civil Engineering";
-                    else if (nextDept.includes("Management")) nextProg = "Master of Business Administration (MBA)";
+                    let nextProg = "Bachelor of Commerce (B.Com)";
+                    if (nextDept.includes("Commerce")) nextProg = "Bachelor of Commerce (B.Com)";
+                    else if (nextDept.includes("Arts")) nextProg = "Bachelor of Arts (B.A.)";
+                    else if (nextDept.includes("Management")) nextProg = "Bachelor of Management Studies (BMS)";
+                    else if (nextDept.includes("Computer Applications")) nextProg = "Bachelor of Computer Applications (BCA)";
+                    else if (nextDept.includes("Information Technology")) nextProg = "B.Sc Information Technology";
+                    else if (nextDept.includes("Computer Science")) nextProg = "B.Tech Computer Science";
 
                     setFormData((prev) => ({ ...prev, department: nextDept, program: nextProg }));
                   }}
                   className="portal-input text-xs"
                 >
+                  <option>Commerce & Accountancy</option>
+                  <option>Arts & Humanities</option>
+                  <option>Management Studies (BMS)</option>
+                  <option>Computer Applications (BCA)</option>
+                  <option>Information Technology</option>
                   <option>Computer Science & Engineering</option>
-                  <option>Electronics & Communication Engineering</option>
-                  <option>Mechanical Engineering</option>
-                  <option>Civil Engineering</option>
-                  <option>Management Studies</option>
                 </select>
               </div>
               <div>
@@ -373,25 +377,37 @@ export default function NewStudentPage() {
                   onChange={(e) => setFormData({ ...formData, program: e.target.value })}
                   className="portal-input text-xs"
                 >
-                  {formData.department.includes("Electronics") ? (
+                  {formData.department.includes("Commerce") ? (
                     <>
-                      <option>B.Tech Electronics & Comm.</option>
-                      <option>M.Tech VLSI Design</option>
+                      <option>Bachelor of Commerce (B.Com)</option>
+                      <option>B.Com Accounting & Finance (BAF)</option>
+                      <option>B.Com Banking & Insurance (BBI)</option>
+                      <option>B.Com Financial Markets (BFM)</option>
+                      <option>Master of Commerce (M.Com)</option>
                     </>
-                  ) : formData.department.includes("Mechanical") ? (
+                  ) : formData.department.includes("Arts") ? (
                     <>
-                      <option>B.Tech Mechanical Engineering</option>
-                      <option>M.Tech Thermal Engineering</option>
-                    </>
-                  ) : formData.department.includes("Civil") ? (
-                    <>
-                      <option>B.Tech Civil Engineering</option>
-                      <option>M.Tech Structural Engineering</option>
+                      <option>Bachelor of Arts (B.A.)</option>
+                      <option>B.A. Economics</option>
+                      <option>B.A. Psychology</option>
+                      <option>B.A. English Literature</option>
+                      <option>B.A. Marathi Literature</option>
+                      <option>Master of Arts (M.A.)</option>
                     </>
                   ) : formData.department.includes("Management") ? (
                     <>
+                      <option>Bachelor of Management Studies (BMS)</option>
                       <option>Master of Business Administration (MBA)</option>
-                      <option>Bachelor of Business Administration (BBA)</option>
+                    </>
+                  ) : formData.department.includes("Computer Applications") ? (
+                    <>
+                      <option>Bachelor of Computer Applications (BCA)</option>
+                      <option>M.Sc Computer Applications</option>
+                    </>
+                  ) : formData.department.includes("Information Technology") ? (
+                    <>
+                      <option>B.Sc Information Technology</option>
+                      <option>M.Sc Information Technology</option>
                     </>
                   ) : (
                     <>

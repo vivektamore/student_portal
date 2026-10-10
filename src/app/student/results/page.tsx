@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { GraduationCap, Award, Download, CheckCircle, FileText, ChevronRight } from "lucide-react";
 import { DataService, ResultRecord, StudentRecord } from "@/lib/data-service";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 export default function StudentResultsPage() {
   const [results, setResults] = useState<ResultRecord[]>([]);
@@ -128,7 +129,7 @@ export default function StudentResultsPage() {
             <GraduationCap className="w-4 h-4 text-blue-800" />
             <h3 className="text-sm font-bold text-slate-900">Semester {activeSemester} Subject Marks & Grades</h3>
           </div>
-          <span className="text-xs text-slate-500 font-mono font-medium">AY 2024–2025</span>
+          <span className="text-xs text-slate-500 font-mono font-medium">{SITE_CONFIG.academicYear}</span>
         </div>
 
         <div className="overflow-x-auto">

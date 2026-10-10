@@ -21,6 +21,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { DataService } from "@/lib/data-service";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 export default function AdminStudentsPage() {
   const [students, setStudents] = useState<any[]>([]);
@@ -88,7 +89,7 @@ export default function AdminStudentsPage() {
               Students
             </h1>
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 font-semibold border border-blue-200/60">
-              AY 2024–25 Fall Cohort
+              {SITE_CONFIG.academicYear} Cohort
             </span>
           </div>
           <p className="text-sm text-slate-500 mt-1">

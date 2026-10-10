@@ -22,7 +22,7 @@ export default function AdminFeesPage() {
       id: `fee_${Date.now()}`,
       feeType: "Semester VI Tuition Fee",
       semester: 6,
-      academicYear: "2024–2025",
+      academicYear: "2025–2026",
       totalAmount: Number(amount),
       paidAmount: Number(amount),
       dueAmount: 0,

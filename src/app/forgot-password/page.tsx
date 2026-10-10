@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { Mail, ArrowLeft, ArrowRight, CheckCircle2, Building2 } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -35,10 +36,14 @@ export default function ForgotPasswordPage() {
       <header className="w-full bg-white/90 backdrop-blur border-b border-slate-200">
         <div className="max-w-7xl mx-auto h-16 px-4 sm:px-8 flex items-center justify-between">
           <Link href="/login" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-900 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-              VU
-            </div>
-            <span className="font-semibold text-slate-900 text-base">Vanguard University</span>
+            <img
+              src={SITE_CONFIG.logoUrl}
+              alt={SITE_CONFIG.universityName}
+              className="w-9 h-9 object-contain"
+            />
+            <span className="font-semibold text-slate-900 text-sm sm:text-base line-clamp-1">
+              {SITE_CONFIG.universityName}
+            </span>
           </Link>
           <Link href="/login" className="text-xs font-semibold text-blue-700 hover:underline flex items-center gap-1">
             <ArrowLeft className="w-3.5 h-3.5" /> Back to Sign In

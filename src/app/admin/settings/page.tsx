@@ -17,6 +17,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { DataService } from "@/lib/data-service";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 interface AdminUser {
   id: string;
@@ -40,8 +41,8 @@ export default function AdminSettingsPage() {
 
   // Academic Settings Form State
   const [academicSettings, setAcademicSettings] = useState({
-    academicYear: "2024-2025",
-    currentTerm: "Even Semester (Spring 2025)",
+    academicYear: SITE_CONFIG.academicYear,
+    currentTerm: "Even Semester (Spring 2026)",
     attendanceThreshold: 75,
     passingPercentage: 40,
     maxCredits: 28,

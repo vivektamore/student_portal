@@ -48,15 +48,17 @@ export function Header({
         </button>
 
         <Link href={userRole === "ADMIN" ? "/admin/dashboard" : "/student/dashboard"} className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-lg bg-blue-900 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-            {SITE_CONFIG.universityShort}
-          </div>
-          <div className="flex flex-col">
-            <span className="font-semibold text-slate-900 text-sm tracking-tight leading-none">
+          <img
+            src={SITE_CONFIG.logoUrl}
+            alt={SITE_CONFIG.universityName}
+            className="w-9 h-9 sm:w-10 sm:h-10 object-contain drop-shadow-sm"
+          />
+          <div className="flex flex-col max-w-[240px] sm:max-w-md">
+            <span className="font-bold text-slate-900 text-xs sm:text-sm tracking-tight leading-tight line-clamp-1">
               {SITE_CONFIG.universityName}
             </span>
-            <span className="text-[11px] text-slate-500 font-medium">
-              {userRole === "ADMIN" ? SITE_CONFIG.adminPortalTitle : SITE_CONFIG.studentPortalTitle}
+            <span className="text-[10px] sm:text-[11px] text-slate-500 font-medium truncate">
+              {userRole === "ADMIN" ? SITE_CONFIG.adminPortalTitle : SITE_CONFIG.studentPortalTitle} • Autonomous
             </span>
           </div>
         </Link>

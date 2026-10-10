@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const year = academicYear || "2024-2025";
+    const year = academicYear || "2025-2026";
     const sem = Number(semester) || 1;
 
     const enrollments = [];

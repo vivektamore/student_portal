@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { setSessionCookie, comparePassword } from "@/lib/auth";
+import { setSessionCookie, comparePassword, hashPassword } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 const loginSchema = z.object({
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
         });
 
         if (!adminUser) {
-          const passwordHash = await bcrypt.hash(password, 10);
+          const passwordHash = await hashPassword(password);
           adminUser = await prisma.user.create({
             data: {
               email: identifier,

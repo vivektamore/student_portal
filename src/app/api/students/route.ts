@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       const existingCount = await prisma.student.count({
         where: { departmentId: dept.id },
       });
-      enrollmentNumber = generateRollNumber(deptName, progName, 2024, existingCount + 1);
+      enrollmentNumber = generateRollNumber(deptName, progName, new Date().getFullYear(), existingCount + 1);
     }
 
     // 4. Generate clean institutional email if missing or dummy
@@ -150,7 +150,7 @@ export async function POST(request: Request) {
         departmentId: dept.id,
         programId: program.id,
         currentSemester: semester,
-        academicYear: body.academicYear || "2024-2025",
+        academicYear: body.academicYear || "2025-2026",
         cgpa: 0.0,
       },
       include: {
@@ -181,7 +181,7 @@ export async function POST(request: Request) {
             studentId: student.id,
             subjectId: subj.id,
             semester: semester,
-            academicYear: "2024-2025",
+            academicYear: "2025-2026",
             status: "ENROLLED",
           },
         });

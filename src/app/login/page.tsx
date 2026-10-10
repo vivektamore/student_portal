@@ -60,13 +60,20 @@ export default function LoginPage() {
       <header className="w-full bg-white/90 backdrop-blur border-b border-slate-200">
         <div className="max-w-7xl mx-auto h-16 px-4 sm:px-8 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-900 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-              {SITE_CONFIG.universityShort}
+            <img
+              src={SITE_CONFIG.logoUrl}
+              alt={SITE_CONFIG.universityName}
+              className="w-10 h-10 object-contain drop-shadow-sm"
+            />
+            <div className="flex flex-col">
+              <span className="font-bold text-slate-900 text-sm sm:text-base tracking-tight leading-tight">
+                {SITE_CONFIG.universityName}
+              </span>
+              <span className="text-[10px] text-amber-700 font-semibold hidden sm:inline">
+                {SITE_CONFIG.tagline}
+              </span>
             </div>
-            <span className="font-semibold text-slate-900 text-base tracking-tight">
-              {SITE_CONFIG.universityName}
-            </span>
-            <span className="hidden sm:inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium text-xs">
+            <span className="hidden lg:inline-flex items-center px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-medium text-xs">
               Academic Year {SITE_CONFIG.academicYear}
             </span>
           </div>
@@ -114,12 +121,16 @@ export default function LoginPage() {
           <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-10 flex flex-col">
             {/* Header / Crest */}
             <div className="flex flex-col items-center text-center">
-              <div className="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-900 mb-3 shadow-inner">
-                <Building2 className="w-7 h-7" />
+              <div className="w-16 h-16 rounded-2xl bg-white border border-slate-200 flex items-center justify-center p-2 mb-3 shadow-sm">
+                <img
+                  src={SITE_CONFIG.logoUrl}
+                  alt={SITE_CONFIG.universityName}
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h1>
-              <p className="text-sm text-slate-500 mt-1">
-                Sign in to access your authorized university portal.
+              <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">Academic Portal Login</h1>
+              <p className="text-xs text-slate-500 mt-1 max-w-xs">
+                {SITE_CONFIG.affiliation}
               </p>
             </div>
 

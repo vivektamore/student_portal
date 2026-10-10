@@ -409,16 +409,16 @@ export default function AdminDepartmentsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-sm text-slate-900">Academic Year 2024–2025</span>
+              <span className="font-bold text-sm text-slate-900">Academic Year 2025–2026</span>
               <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
                 ACTIVE
               </span>
             </div>
-            <p className="text-xs text-slate-500">Term 1: Aug 2024 – Dec 2024 • Term 2: Jan 2025 – May 2025</p>
+            <p className="text-xs text-slate-500">Term 1: Aug 2025 – Dec 2025 • Term 2: Jan 2026 – May 2026</p>
           </div>
           <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-sm space-y-2">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-sm text-slate-900">Academic Year 2023–2024</span>
+              <span className="font-bold text-sm text-slate-900">Academic Year 2024–2025</span>
               <span className="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
                 ARCHIVED
               </span>

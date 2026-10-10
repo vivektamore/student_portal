@@ -23,9 +23,10 @@ import {
   History,
 } from "lucide-react";
 import { DataService, SubjectRecord } from "@/lib/data-service";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 export default function AdminDashboardPage() {
-  const [academicYear, setAcademicYear] = useState("AY 2024–2025 (Active Term)");
+  const [academicYear, setAcademicYear] = useState(`${SITE_CONFIG.academicYear} (Active Term)`);
   const [semesterCycle, setSemesterCycle] = useState("Spring Semester (Cycle 2)");
   const [isDataCleared, setIsDataCleared] = useState(false);
   const [subjectsList, setSubjectsList] = useState<SubjectRecord[]>([]);
@@ -124,9 +125,9 @@ export default function AdminDashboardPage() {
             onChange={(e) => setAcademicYear(e.target.value)}
             className="h-10 px-3 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-700 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-600 cursor-pointer"
           >
-            <option>AY 2024–2025 (Active Term)</option>
+            <option>{SITE_CONFIG.academicYear} (Active Term)</option>
+            <option>AY 2024–2025</option>
             <option>AY 2023–2024</option>
-            <option>AY 2022–2023</option>
           </select>
 
           {/* Term Selector */}

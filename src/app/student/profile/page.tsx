@@ -15,6 +15,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { DataService, StudentRecord } from "@/lib/data-service";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 export default function StudentProfilePage() {
   const router = useRouter();
@@ -116,7 +117,7 @@ export default function StudentProfilePage() {
               <span>•</span>
               <span>Semester {student.currentSemester || 1}</span>
               <span>•</span>
-              <span>AY {student.academicYear || "2024–2025"}</span>
+              <span>{student.academicYear?.startsWith("AY") ? student.academicYear : `AY ${student.academicYear || SITE_CONFIG.academicYear}`}</span>
               <span>•</span>
               <span className="text-blue-800 font-bold">CGPA: {student.cgpa ?? "0.0"}</span>
             </div>

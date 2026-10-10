@@ -4,6 +4,7 @@ import React, { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Lock, CheckCircle2, ArrowRight, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { SITE_CONFIG } from "@/lib/site-config";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -62,10 +63,14 @@ function ResetPasswordForm() {
       <header className="w-full bg-white/90 backdrop-blur border-b border-slate-200">
         <div className="max-w-7xl mx-auto h-16 px-4 sm:px-8 flex items-center justify-between">
           <Link href="/login" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg bg-blue-900 flex items-center justify-center text-white font-bold text-sm shadow-sm">
-              VU
-            </div>
-            <span className="font-semibold text-slate-900 text-base">Vanguard University</span>
+            <img
+              src={SITE_CONFIG.logoUrl}
+              alt={SITE_CONFIG.universityName}
+              className="w-9 h-9 object-contain"
+            />
+            <span className="font-semibold text-slate-900 text-sm sm:text-base line-clamp-1">
+              {SITE_CONFIG.universityName}
+            </span>
           </Link>
           <Link href="/login" className="text-xs font-semibold text-blue-700 hover:underline">
             Back to Sign In

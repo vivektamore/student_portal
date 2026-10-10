@@ -56,7 +56,7 @@ export async function GET() {
             department: student.program?.department?.name || "Computer Science & Engineering",
             program: student.program?.name || "B.Tech Computer Science",
             currentSemester: student.currentSemester,
-            academicYear: "2024-2025",
+            academicYear: student.academicYear || "2025-2026",
             cgpa: Number(student.cgpa) || 0.0,
             avatarUrl: "",
           },

@@ -101,9 +101,11 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           {/* Mobile Header in Drawer (Hidden on Desktop to prevent duplicate navbar) */}
           <div className="h-16 flex items-center justify-between px-5 border-b border-slate-100 bg-white shrink-0 lg:hidden">
             <div className="flex items-center gap-3 min-w-0">
-              <div className="w-8 h-8 rounded-lg bg-blue-900 flex items-center justify-center shrink-0 shadow-sm text-white font-bold text-xs">
-                {SITE_CONFIG.universityShort}
-              </div>
+              <img
+                src={SITE_CONFIG.logoUrl}
+                alt={SITE_CONFIG.universityName}
+                className="w-8 h-8 object-contain shrink-0"
+              />
               <div className="flex flex-col min-w-0">
                 <span className="font-bold text-sm text-slate-900 tracking-tight truncate leading-tight">
                   {SITE_CONFIG.universityName}
@@ -127,7 +129,7 @@ export function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
           {/* Term Indicator Pill (Mobile only, desktop is shown in top Header) */}
           <div className="px-4 py-2.5 bg-slate-50/70 border-b border-slate-100 lg:hidden">
             <div className="flex items-center justify-between text-xs font-medium text-slate-700">
-              <span className="text-[11px] text-slate-500">AY 2024–25 (Spring)</span>
+              <span className="text-[11px] text-slate-500">{SITE_CONFIG.academicYear}</span>
               <span className="inline-flex items-center gap-1 text-[10px] font-bold text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200/60">
                 <span className="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
                 Active Term

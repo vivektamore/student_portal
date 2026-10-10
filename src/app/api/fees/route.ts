@@ -120,7 +120,7 @@ export async function POST(request: Request) {
       data: {
         studentId,
         semester: Number(semester) || 1,
-        academicYear: academicYear || "2024-2025",
+        academicYear: academicYear || "2025-2026",
         feeType: feeType || "Semester Tuition & Lab Fee",
         totalAmount: amount,
         paidAmount: 0.0,

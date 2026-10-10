@@ -1,4 +1,5 @@
 // Seed data types and in-memory store for resilient UI operation
+import { SITE_CONFIG } from "./site-config";
 export interface StudentRecord {
   id: string;
   userId: string;
@@ -172,7 +173,7 @@ const inMemoryStore = {
     department: "General Academics",
     program: "Undergraduate Program",
     currentSemester: 1,
-    academicYear: "2024–2025",
+    academicYear: SITE_CONFIG.academicYear,
     cgpa: 0.0,
     avatarUrl: "",
   } as StudentRecord,
@@ -226,7 +227,7 @@ export const DataService = {
             department: student.program.department.name,
             program: student.program.name,
             currentSemester: student.currentSemester,
-            academicYear: "2024-2025",
+            academicYear: SITE_CONFIG.academicYear,
             cgpa: Number(student.cgpa) || 0.0,
             avatarUrl: "",
           };

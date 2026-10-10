@@ -127,7 +127,7 @@ export async function POST(request: Request) {
           room: item.room || "Hall B-204",
           subjectId: item.subjectId,
           facultyId: item.facultyId || faculty.id,
-          academicYear: item.academicYear || "2024-2025",
+          academicYear: item.academicYear || "2025-2026",
         },
       });
       created.push(entry);
