@@ -6,11 +6,26 @@ import bcrypt from "bcryptjs";
 async function main() {
   console.log("🌱 Starting development database seeding for College Student Portal...");
 
-  const host = process.env.DATABASE_HOST || "localhost";
-  const port = Number(process.env.DATABASE_PORT) || 3306;
-  const user = process.env.DATABASE_USER || "root";
-  const password = process.env.DATABASE_PASSWORD || "";
-  const database = process.env.DATABASE_NAME || "college_portal";
+  let host = process.env.DATABASE_HOST || "localhost";
+  let port = Number(process.env.DATABASE_PORT) || 3306;
+  let user = process.env.DATABASE_USER || "root";
+  let password = process.env.DATABASE_PASSWORD || "";
+  let database = process.env.DATABASE_NAME || "college_portal";
+  let ssl = undefined;
+
+  if (process.env.DATABASE_URL) {
+    try {
+      const parsedUrl = new URL(process.env.DATABASE_URL);
+      host = parsedUrl.hostname;
+      if (parsedUrl.port) port = Number(parsedUrl.port);
+      if (parsedUrl.username) user = decodeURIComponent(parsedUrl.username);
+      if (parsedUrl.password) password = decodeURIComponent(parsedUrl.password);
+      if (parsedUrl.pathname) database = parsedUrl.pathname.replace(/^\//, "");
+      if (host !== "localhost" && host !== "127.0.0.1") {
+        ssl = { rejectUnauthorized: false };
+      }
+    } catch {}
+  }
 
   const adapter = new PrismaMariaDb({
     host,
@@ -18,6 +33,7 @@ async function main() {
     user,
     password,
     database,
+    ...(ssl ? { ssl } : {}),
   });
 
   const prisma = new PrismaClient({ adapter });

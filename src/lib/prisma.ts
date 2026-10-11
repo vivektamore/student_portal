@@ -40,8 +40,9 @@ function createPrismaClient(): PrismaClient {
     password,
     database,
     ...(ssl ? { ssl } : {}),
-    connectionLimit: process.env.NODE_ENV === "production" ? 5 : 10,
-    connectTimeout: 8000,
+    connectionLimit: 4,
+    connectTimeout: 15000,
+    acquireTimeout: 30000,
   });
 
   return new PrismaClient({
