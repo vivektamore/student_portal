@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run db:generate && next build",
+    "postinstall": "npm run db:generate",
     "start": "next start",
     "lint": "eslint",
     "prisma": "node --experimental-require-module ./node_modules/prisma/build/index.js",

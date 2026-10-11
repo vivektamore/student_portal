@@ -6,7 +6,7 @@ const AUTH_SECRET = new TextEncoder().encode(
 );
 const AUTH_COOKIE_NAME = process.env.AUTH_COOKIE_NAME || "college_portal_session";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Allow static files, next internals, and public endpoints
@@ -68,6 +68,9 @@ export async function middleware(request: NextRequest) {
 
   return NextResponse.next();
 }
+
+// Backward compatibility export if Next.js checks either function name
+export const middleware = proxy;
 
 export const config = {
   matcher: [
