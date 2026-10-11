@@ -156,9 +156,9 @@ export default function LoginPage() {
                   Email or Student ID <span className="text-red-600">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <span className="text-xs font-mono font-bold">@</span>
-                  </span>
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <span className="text-sm font-mono font-bold">@</span>
+                  </div>
                   <input
                     id="identifier"
                     name="identifier"
@@ -166,8 +166,8 @@ export default function LoginPage() {
                     required
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="e.g. VU-2022-CSE-0142 or admin@college.edu"
-                    className="portal-input pl-10"
+                    placeholder="e.g. MDSMC-2025-BCOM-0001 or admin@college.edu"
+                    className="portal-input has-icon-left !pl-11"
                   />
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1">Use your official institutional credentials</p>
@@ -178,9 +178,9 @@ export default function LoginPage() {
                   Password <span className="text-red-600">*</span>
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                    <Lock className="w-4 h-4" />
-                  </span>
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4 text-slate-400" />
+                  </div>
                   <input
                     id="password"
                     name="password"
@@ -189,12 +189,12 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter account password"
-                    className="portal-input pl-10 pr-10"
+                    className="portal-input has-icon-left has-icon-right !pl-11 !pr-11"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
                   >
                     {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>

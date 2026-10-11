@@ -139,7 +139,7 @@ function ResetPasswordForm() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="At least 6 characters"
-                      className="portal-input pr-10"
+                      className="portal-input has-icon-right !pr-11"
                     />
                     <button
                       type="button"

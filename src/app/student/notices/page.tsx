@@ -49,7 +49,7 @@ export default function StudentNoticesPage() {
             placeholder="Search circulars, topics, or circular issuing authority..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="portal-input pl-9 text-xs"
+            className="portal-input has-icon-left !pl-10 text-xs"
           />
         </div>
 

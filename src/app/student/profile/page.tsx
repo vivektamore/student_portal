@@ -190,7 +190,7 @@ export default function StudentProfilePage() {
                     required
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
-                    className="portal-input pl-9"
+                    className="portal-input has-icon-left !pl-10"
                   />
                 </div>
               </div>

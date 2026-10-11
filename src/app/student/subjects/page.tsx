@@ -51,7 +51,7 @@ export default function StudentSubjectsPage() {
             placeholder="Search by code, subject name, or instructor..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="portal-input pl-9 text-xs"
+            className="portal-input has-icon-left !pl-10 text-xs"
           />
         </div>
 

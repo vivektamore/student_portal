@@ -76,6 +76,16 @@
   transition: all 0.15s ease-in-out;
 }
 
+.portal-input.has-icon-left,
+.portal-input-icon-left {
+  padding-left: 2.75rem !important;
+}
+
+.portal-input.has-icon-right,
+.portal-input-icon-right {
+  padding-right: 2.75rem !important;
+}
+
 .portal-input:focus {
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
